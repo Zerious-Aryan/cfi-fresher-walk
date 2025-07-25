@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 import os
 import webbrowser
 from backend.profile_manager import ProfileManager
+import sys
 
 ASSETS_PATH = os.path.abspath("assets")
 
@@ -139,15 +140,16 @@ profile_frame.pack(expand=True)
 if __name__ == "__main__":
     render_profiles()
 
-    add_button = tk.Button(
-        root,
-        text="+ Add Profile",
-        font=("Arial", 14),
-        bg="#222",
-        fg="white",
-        activebackground="#333",
-        command=open_add_profile_window
-    )
-    add_button.pack(pady=10)
+    if not getattr(sys, 'frozen', False):
+        add_button = tk.Button(
+            root,
+            text="+ Add Profile",
+            font=("Arial", 14),
+            bg="#222",
+            fg="white",
+            activebackground="#333",
+            command=open_add_profile_window
+        )
+        add_button.pack(pady=10)
 
     root.mainloop()
