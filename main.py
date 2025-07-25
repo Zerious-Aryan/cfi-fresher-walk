@@ -3,7 +3,7 @@ from tkinter import filedialog, messagebox
 from functools import partial
 from PIL import Image, ImageTk
 import os
-
+import webbrowser
 from backend.profile_manager import ProfileManager
 
 ASSETS_PATH = os.path.abspath("assets")
@@ -16,11 +16,12 @@ root.configure(bg="black")
 manager = ProfileManager()
 
 def open_profile_window(profile):
-    win = tk.Toplevel(root)
-    win.title(profile['name'])
-    win.geometry("400x300")
-    win.configure(bg="black")
-    tk.Label(win, text=f"Welcome, {profile['name']}!", font=("Arial", 20), fg="white", bg="black").pack(expand=True)
+    html = profile.get("HTML")
+    if html and os.path.exists(html):
+        webbrowser.open(f"file://{os.path.abspath(html)}")
+    else:
+        messagebox.showerror("File Not Found", f"No valid HTML file found for {profile['name']}.")
+
 
 def on_enter(event):
     widget = event.widget
@@ -79,17 +80,18 @@ def render_profiles():
 def open_add_profile_window():
     def submit():
         name = name_entry.get().strip()
-        img_path = image_path_var.get()
+        image_path = image_path_var.get()
+        html = html_path_var.get().strip()
 
-        if not name or not img_path:
-            messagebox.showwarning("Input Error", "Please enter a name and choose an image.")
+        if not name or not image_path or not html:
+            messagebox.showwarning("Input Error", "Please enter a name, image, and HTML file.")
             return
 
-        if not os.path.exists(img_path):
-            messagebox.showerror("File Error", "Selected image does not exist.")
+        if not os.path.exists(image_path) or not os.path.exists(html):
+            messagebox.showerror("File Error", "Selected files do not exist.")
             return
 
-        manager.add_profile(name, img_path)
+        manager.add_profile(name, image_path, html)
         render_profiles()
         win.destroy()
 
@@ -101,12 +103,23 @@ def open_add_profile_window():
         )
         if file_path:
             image_path_var.set(file_path)
+    
+    html_path_var = tk.StringVar()
+    
+    def browse_html():
+        file_path = filedialog.askopenfilename(
+            title="Select HTML File",
+            filetypes=[("HTML Files", "*.html")]
+        )
+        if file_path:
+            html_path_var.set(file_path)
+
 
     win = tk.Toplevel(root)
     win.title("Add New Profile")
     win.geometry("400x200")
     win.configure(bg="black")
-
+   
     tk.Label(win, text="Name:", fg="white", bg="black", font=("Arial", 12)).pack(pady=(20, 5))
     name_entry = tk.Entry(win, font=("Arial", 12))
     name_entry.pack()
@@ -114,6 +127,9 @@ def open_add_profile_window():
     tk.Button(win, text="Browse Image", command=browse_image).pack(pady=10)
     image_path_var = tk.StringVar()
     tk.Label(win, textvariable=image_path_var, bg="black", fg="gray", font=("Arial", 10)).pack()
+
+    tk.Button(win, text="Browse HTML File", command=browse_html).pack(pady=5)
+    tk.Label(win, textvariable=html_path_var, bg="black", fg="gray", font=("Arial", 10)).pack()
 
     tk.Button(win, text="Add Profile", command=submit, bg="green", fg="white").pack(pady=15)
 

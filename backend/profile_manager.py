@@ -20,8 +20,8 @@ class ProfileManager:
         with open(DATA_PATH, 'w') as f:
             json.dump(self.profiles, f, indent=4)
 
-    def add_profile(self, name, image_path):
-        new_profile = {"name": name, "image": image_path}
+    def add_profile(self, name, image_path, html):
+        new_profile = {"name": name, "image": image_path, "HTML": html}
         self.profiles.append(new_profile)
         self._save_profiles()
 
