@@ -24,11 +24,11 @@ def open_profile_window(profile):
 
 def on_enter(event):
     widget = event.widget
-    widget.config(width=130, height=130)
+    widget.config(width=200, height=200)
 
 def on_leave(event):
     widget = event.widget
-    widget.config(width=100, height=100)
+    widget.config(width=130, height=130)
 
 def render_profiles():
     for widget in profile_frame.winfo_children():
@@ -42,8 +42,8 @@ def render_profiles():
         if not os.path.exists(img_path):
             continue
 
-        normal_size = (100, 100)
-        hover_size = (130, 130)
+        normal_size = (130, 130)
+        hover_size = (200, 200)
 
 
         raw_img = Image.open(img_path).convert("RGBA")
