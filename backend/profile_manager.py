@@ -31,3 +31,4 @@ class ProfileManager:
 
     def get_profiles(self):
         return self.profiles
+    
